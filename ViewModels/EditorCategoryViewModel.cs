@@ -1,8 +1,12 @@
-﻿namespace Blog.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Blog.ViewModels
 {
     public class EditorCategoryViewModel
     {
+        [Required(ErrorMessage ="O nome é Obrigatório")]
         public string Name { get; set; }
+        [Required(ErrorMessage = "O slug é Obrigatório")]
         public string Slug { get; set; }
     }
 }
