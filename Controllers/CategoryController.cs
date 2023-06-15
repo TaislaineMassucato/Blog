@@ -1,4 +1,5 @@
 ﻿using Blog.Data;
+using Blog.Extensions;
 using Blog.Models;
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -36,15 +37,15 @@ namespace Blog.Controllers
 
                 if (categories == null)
                 {
-                    return NotFound();
+                    return NotFound(new ResultViewModel<Category>("Conteudo não encontrado"));
                 }
                 else
 
-                    return Ok(categories);
+                    return Ok(new ResultViewModel<Category>(categories));
             }
             catch (Exception e)
             {
-                return StatusCode(500, "05xe16 - Falha interna no Servidor");
+                return StatusCode(500, new ResultViewModel<Category>("05xe16 - Falha interna no Servidor"));
             }
         }
 
@@ -53,7 +54,7 @@ namespace Blog.Controllers
         public async Task<IActionResult> PostAsync([FromBody] EditorCategoryViewModel model, [FromServices] BlogDataContext context)
         {
             if(!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(new ResultViewModel<Category>(ModelState.GetErrors()));
             
             try
             {
@@ -66,15 +67,15 @@ namespace Blog.Controllers
                 await context.Categories.AddAsync(category);
                 await context.SaveChangesAsync();
 
-                return Created($"v1/categories/{category.Id}", category);
+                return Created($"v1/categories/{category.Id}", new ResultViewModel<Category>(category));
             }
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, "05xe9 - Não foi possível incluir a categoria");
+                return StatusCode(500, new ResultViewModel<Category>("05xe9 - Não foi possível incluir a categoria"));
             }
-            catch (Exception e)
+            catch
             {
-                return StatusCode(500, "05xe9 - Falha interna no Servidor");
+                return StatusCode(500, new ResultViewModel<Category>("05xe9 - Falha interna no Servidor"));
             }
         }
 
@@ -88,7 +89,7 @@ namespace Blog.Controllers
 
                 if (categories == null)
                 {
-                    return NotFound();
+                    return NotFound(new ResultViewModel<Category>("Id Não encontrado"));
                 }
                 categories.Name = model.Name;
                 categories.Slug = model.Slug;
@@ -96,15 +97,15 @@ namespace Blog.Controllers
                 context.Categories.Update(categories);
                 await context.SaveChangesAsync();
 
-                return Ok(model);
+                return Ok(new ResultViewModel<Category>(categories));
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, "05xe11 - Não foi possível alterar a categoria");
+                return StatusCode(500, new ResultViewModel<Category>("05xe11 - Não foi possível alterar a categoria"));
             }
-            catch (Exception e)
+            catch 
             {
-                return StatusCode(500, "05xe12 - Falha interna no Servidor");
+                return StatusCode(500, new ResultViewModel<Category>("05xe12 - Falha interna no Servidor"));
             }
         }
 
@@ -118,22 +119,22 @@ namespace Blog.Controllers
 
                 if (categories == null)
                 {
-                    return NotFound();
+                    return NotFound(new ResultViewModel<Category>("Id Não encontrado"));
                 }
 
                 context.Categories.Remove(categories);
                 await context.SaveChangesAsync();
 
-                return Ok(categories);
+                return Ok(new ResultViewModel<Category>(categories));
 
             }
             catch (DbUpdateException e)
             {
                 return StatusCode(500, "05xe13 - Não foi possível remover a categoria");
             }
-            catch (Exception e)
+            catch
             {
-                return StatusCode(500, "05xe14 - Falha interna no Servidor");
+                return StatusCode(500, new ResultViewModel<Category>("05xe14 - Falha interna no Servidor"));
             }
         }
     }
